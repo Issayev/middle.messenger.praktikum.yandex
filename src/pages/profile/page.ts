@@ -1,10 +1,14 @@
 import { Block } from "core/dom";
-import avatarImagePlaceholder from "static/avatar-placeholder-profile.png";
-import { ImageComponent, Input } from "components";
-import { HomeButton } from "components/buttons";
+import { Input } from "components/inputs";
+import { HomeButton } from "components/buttons/home-button";
 import { WithStore } from "hocs";
+import { type ImageComponent } from "components/image";
 import template from "./template";
-import { DataChangeButton, ProfilePageInputForm } from "./components";
+import {
+  DataChangeButton,
+  ProfilePageInputForm,
+  ProfileHeader,
+} from "./components";
 import { EnumInputFields } from "./components/data-form";
 import { MapInputFieldToUserDataRecord } from "./components/data-form/fields";
 import { AvatarUploadForm } from "./components/avatar-upload-form";
@@ -16,25 +20,15 @@ export class ProfilePage extends ProfilePageBlock {
   constructor() {
     const children: TComponentChildren = {};
 
-    const storeAvatar = window.store.getUserDataByPath("avatar");
-    const imageSource = storeAvatar || avatarImagePlaceholder;
-    const avatarImage = new ImageComponent({
-      props: {
-        htmlAttributes: {
-          src: imageSource,
-          alt: "Profile Avatar",
-        },
-      },
-    });
-    children.avatarImage = avatarImage;
-    children.avatarUploadForm = new AvatarUploadForm(avatarImage);
+    const header = new ProfileHeader();
+    const avatarImage = header.getChildByPath<ImageComponent>("avatarImage");
 
+    children.header = header;
     children.profileDataForm = new ProfilePageInputForm();
+    children.avatarUploadForm = new AvatarUploadForm();
     children.homeButton = new HomeButton();
 
-    const refs = {} as TComponentRefs;
-
-    super({ children, refs });
+    super({ children, refs: { avatarImage } });
   }
 
   protected render(): string {
@@ -47,7 +41,6 @@ export class ProfilePage extends ProfilePageBlock {
     this.children.changeDataButton = new DataChangeButton({
       form: this.children.profileDataForm as Block,
     });
-    this.props.userID = this.store.getUserDataByPath("id") as number;
   }
 
   public updateUserInfo() {
@@ -66,7 +59,7 @@ export class ProfilePage extends ProfilePageBlock {
 
   public updateUserAvatar() {
     const newAvatar = this.store.getUserDataByPath("avatar") as string;
-    (this.children.avatarImage as ImageComponent).setPropByPath(
+    (this.refs.avatarImage as ImageComponent).setPropByPath(
       "htmlAttributes.src",
       newAvatar
     );

@@ -1,13 +1,12 @@
 import { Block } from "core/dom";
-import { type ImageComponent } from "components";
+import { type ImageComponent } from "components/image";
 import { SubmitSection } from "./submit-section";
 import { AvatarInput } from "./avatar-input";
 import template from "./template";
 
 export class AvatarUploadForm extends Block {
-  constructor(profilePageImageRef: ImageComponent) {
+  constructor() {
     super({
-      refs: { profileImage: profilePageImageRef },
       state: { uploadingStatus: "" },
     });
   }

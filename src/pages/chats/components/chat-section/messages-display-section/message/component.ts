@@ -1,4 +1,4 @@
-import { TextComponent } from "components";
+import { TextComponent } from "components/text-component";
 import { Block } from "core/dom";
 import template from "./template";
 
